@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -10,13 +10,17 @@ import {
 
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { debounce } from "lodash";
+
 import { theme } from "../../constants/theme";
 import { hp, wp } from "../../helpers/common";
 import Categories from "../../components/Categories";
 import ImageGrid from "../../components/ImageGrid";
 import { apiCall } from "../../api/index";
 
-const index = () => {
+var page = 1;
+
+const HomeScreen = () => {
   const { top } = useSafeAreaInsets();
   const paddingTop = top > 0 ? top + 10 : 30;
 
@@ -25,7 +29,16 @@ const index = () => {
   const [images, setImages] = useState([]);
 
   const searchInputRef = useRef(null);
-  const handleChangeCategory = (cat) => setActiveCategory(cat);
+  const handleChangeCategory = (cat) => {
+    setActiveCategory(cat);
+    clearSearch();
+    setImages([]);
+    page = 1;
+    let params = { page };
+
+    if (cat) params.cat = cat;
+    fetchImages(params, false);
+  };
 
   useEffect(() => {
     fetchImages();
@@ -40,6 +53,32 @@ const index = () => {
         : setImages([...res.data.hits]);
     }
   };
+
+  const handleSearch = (text) => {
+    setSearch(text);
+    if (text.length > 2) {
+      // search for this text
+      page = 1;
+      setImages([]);
+      setActiveCategory(null); // clear category when searching
+      fetchImages({ page: 1, q: text }, false);
+    }
+    if (text == "") {
+      // reset results
+      page = 1;
+      searchInputRef?.current?.clear();
+      setImages([]);
+      setActiveCategory(null); // clear category when searching
+      fetchImages({ page }, false);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearch("");
+    searchInputRef?.current?.clear();
+  };
+
+  const handleTextDebounce = () => useCallback(debounce(handleSearch, 400), []);
 
   return (
     <View style={[styles.container, { paddingTop }]}>
@@ -69,13 +108,13 @@ const index = () => {
           </View>
           <TextInput
             placeholder="Search for photos..."
-            value={search}
+            // value={search}
             ref={searchInputRef}
-            onChangeText={(value) => setSearch(search)}
+            onChangeText={handleTextDebounce}
             style={styles.searchInput}
           />
           {search && (
-            <Pressable style={styles.closeIcon}>
+            <Pressable onPress={clearSearch} style={styles.closeIcon}>
               <Ionicons
                 name="close"
                 size={24}
@@ -145,4 +184,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default index;
+export default HomeScreen;
