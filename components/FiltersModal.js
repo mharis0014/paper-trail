@@ -10,9 +10,9 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 
-import { hp, capitalize } from "../helpers/common";
+import { hp, capitalize, wp } from "../helpers/common";
 import { theme } from "../constants/theme";
-import { CommonFiltersRow, SectionView } from "./FilterViews";
+import { ColorFilters, CommonFiltersRow, SectionView } from "./FilterViews";
 import { data } from "../constants/data";
 
 const FiltersModal = ({ modalRef, filters, setFilters, onApply, onReset }) => {
@@ -84,7 +84,7 @@ const sections = {
   order: (props) => <CommonFiltersRow {...props} />,
   orientation: (props) => <CommonFiltersRow {...props} />,
   type: (props) => <CommonFiltersRow {...props} />,
-  colors: (props) => <CommonFiltersRow {...props} />,
+  colors: (props) => <ColorFilters {...props} />,
 };
 
 const CustomBackdrop = ({ animatedIndex, style }) => {
@@ -115,7 +115,7 @@ const CustomBackdrop = ({ animatedIndex, style }) => {
 };
 
 const styles = StyleSheet.create({
-  contentContainer: {
+  container: {
     flex: 1,
     alignItems: "center",
   },
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
   buttons: {
     flex: 1,
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   applyButton: {
@@ -152,6 +153,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.neutral(0.03),
     padding: 12,
+    marginRight: 10,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: theme.radius.md,

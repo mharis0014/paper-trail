@@ -36,7 +36,7 @@ const WelcomeScreen = () => {
             entering={FadeInDown.delay(400).springify()}
             style={styles.title}
           >
-            Pixels
+            Paper Trail
           </Animated.Text>
           <Animated.Text
             entering={FadeInDown.delay(500).springify()}
