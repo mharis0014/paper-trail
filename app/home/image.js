@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Pressable,
   Alert,
+  Text,
 } from "react-native";
 
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -151,13 +152,10 @@ const ImageScreen = () => {
               <ActivityIndicator size={"small"} color={theme.colors.white} />
             </View>
           ) : (
-            <Pressable style={styles.button} onPress={handleDownloadImage}>
-              <Octicons name="download" size={24} color={theme.colors.white} />
+            <Pressable style={styles.button} onPress={handleShareImage}>
+              <Entypo name="share" size={24} color={theme.colors.white} />
             </Pressable>
           )}
-          <Pressable style={styles.button} onPress={handleShareImage}>
-            <Entypo name="share" size={24} color={theme.colors.white} />
-          </Pressable>
         </Animated.View>
       </View>
       <Toast config={toastConfig} visibilityTime={2500} />
@@ -194,7 +192,7 @@ const styles = StyleSheet.create({
   },
   button: {
     height: hp(6),
-    width: wp(6),
+    width: wp(12),
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.2)",

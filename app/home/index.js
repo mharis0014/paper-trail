@@ -31,6 +31,7 @@ const HomeScreen = () => {
   const [images, setImages] = useState([]);
   const [filters, setFilters] = useState(null);
   const [activeCategory, setActiveCategory] = useState("");
+  const [loading, setLoading] = useState(false);
   const [isEndReached, setIsEndReached] = useState(false);
 
   const searchInputRef = useRef(null);
@@ -45,7 +46,7 @@ const HomeScreen = () => {
     page = 1;
     let params = { page, ...filters };
 
-    if (cat) params.cat = cat;
+    if (cat) params.category = cat;
     fetchImages(params, false);
   };
 
@@ -54,14 +55,18 @@ const HomeScreen = () => {
   }, []);
 
   const fetchImages = async (params = { page: 1 }, append = true) => {
+    setLoading(true);
     console.log("params: ", params, append);
     let res = await apiCall(params);
 
     if (res.success && res?.data?.hits) {
-      append
-        ? setImages([...images, ...res.data.hits])
-        : setImages([...res.data.hits]);
+      if (append) {
+        setImages([...images, ...res.data.hits]);
+      } else {
+        setImages([...res.data.hits]);
+      }
     }
+    setLoading(false);
   };
 
   const openFiltersModal = () => modalRef?.current?.present();
@@ -80,12 +85,13 @@ const HomeScreen = () => {
   };
 
   const clearThisFilter = (filterName) => {
-    let filterz = { ...filters };
-    delete filters[filterName];
-    setFilters({ ...filterz });
+    let updatedFilters = { ...filters };
+    delete updatedFilters[filterName];
+    setFilters({ ...updatedFilters });
+
     page = 1;
     setImages([]);
-    let params = { page, ...filterz };
+    let params = { page, ...updatedFilters };
     if (activeCategory) params.category = activeCategory;
     if (search) params.q = search;
     fetchImages(params, false);
@@ -132,10 +138,10 @@ const HomeScreen = () => {
     const contentHeight = event.nativeEvent.contentSize.height;
     const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
     const scrollOffset = event.nativeEvent.contentOffset.y;
-    const bottomPositioning = contentHeight - scrollViewHeight;
+    const bottomPosition = contentHeight - scrollViewHeight;
 
-    if (scrollOffset >= bottomPositioning - 1) {
-      if (!isEndReached) {
+    if (scrollOffset >= bottomPosition - 1) {
+      if (!isEndReached && !loading) {
         setIsEndReached(true);
         console.log("reached the bottom of the scroll view");
 
@@ -146,23 +152,20 @@ const HomeScreen = () => {
         if (search) params.q = search;
         fetchImages(params);
       }
-    } else if (isEndReached) {
-      setIsEndReached(false);
-    }
+    } else if (isEndReached) setIsEndReached(false);
   };
 
-  const handleScrollUp = () => {
+  const handleScrollUp = () =>
     scrollRef?.current?.scrollTo({ y: 0, animated: true });
-  };
 
-  const handleTextDebounce = () => useCallback(debounce(handleSearch, 400), []);
+  const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
   return (
     <View style={[styles.container, { paddingTop }]}>
       {/* header */}
       <View style={styles.header}>
         <Pressable onPress={handleScrollUp}>
-          <Text style={styles.title}>Pixels</Text>
+          <Text style={styles.title}>Paper Trail</Text>
         </Pressable>
         <Pressable onPress={openFiltersModal}>
           <FontAwesome6
@@ -261,11 +264,13 @@ const HomeScreen = () => {
       </ScrollView>
 
       {/* loader */}
-      <View
-        style={{ marginBottom: 70, marginTop: images.length > 0 ? 10 : 70 }}
-      >
-        <ActivityIndicator size={"large"} />
-      </View>
+      {loading && (
+        <View
+          style={{ marginBottom: 70, marginTop: images.length > 0 ? 10 : 70 }}
+        >
+          <ActivityIndicator size={"large"} />
+        </View>
+      )}
 
       {/* filters modal */}
       <FiltersModal

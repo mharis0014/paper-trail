@@ -3,8 +3,8 @@ import { Pressable, StyleSheet } from "react-native";
 
 import { Image } from "expo-image";
 
-import { theme } from "../constants/theme";
 import { getImageSize, wp } from "../helpers/common";
+import { theme } from "../constants/theme";
 
 const ImageCard = ({ item, index, columns, router }) => {
   const getImageHeight = () => {

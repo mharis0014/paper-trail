@@ -4,14 +4,12 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { capitalize, hp } from "../helpers/common";
 import { theme } from "../constants/theme";
 
-export const SectionView = ({ title, content }) => {
-  return (
-    <View style={styles.sectionContainer}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View>{content}</View>
-    </View>
-  );
-};
+export const SectionView = ({ title, content }) => (
+  <View style={styles.sectionContainer}>
+    <Text style={styles.sectionTitle}>{title}</Text>
+    <View>{content}</View>
+  </View>
+);
 
 export const CommonFiltersRow = ({ data, filterName, filters, setFilters }) => {
   const onSelect = (item) => {

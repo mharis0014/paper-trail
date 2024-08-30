@@ -1,9 +1,11 @@
 import React from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { data } from "../constants/data";
+import { FlatList, Pressable, StyleSheet, Text } from "react-native";
+
+import Animated, { FadeInRight } from "react-native-reanimated";
+
 import { hp, wp } from "../helpers/common";
 import { theme } from "../constants/theme";
-import Animated, { FadeInRight } from "react-native-reanimated";
+import { data } from "../constants/data";
 
 const Categories = ({ activeCategory, handleChangeCategory }) => {
   return (
